@@ -1,8 +1,10 @@
+import base64
 import hashlib
 import io
 import iota
 from iota import TryteString
 import ipfsapi
+import IOTATransaction
 import json
 IPFS_IP = '127.0.0.1'
 IPFS_PORT = '5001'
@@ -31,6 +33,21 @@ class IPportal:
                 continue
             X += str(ord(eip[i])-65)
         return X[1:]
+    def Kencode(self,key, clear):
+        enc = []
+        for i in range(len(clear)):
+            key_c = key[i % len(key)]
+            enc_c = chr((ord(clear[i]) + ord(key_c)) % 256)
+            enc.append(enc_c)
+        return base64.urlsafe_b64encode("".join(enc).encode()).decode()
+    def Kdecode(self,key, enc):
+        dec = []
+        enc = base64.urlsafe_b64decode(enc).decode()
+        for i in range(len(enc)):
+            key_c = key[i % len(key)]
+            dec_c = chr((256 + ord(enc[i]) - ord(key_c)) % 256)
+            dec.append(dec_c)
+        return "".join(dec)
     def GetKey(self):
         m = hashlib.md5()
         m.update(self.IPENCODE().encode('utf-8')+self.groupkey.encode('utf-8'))
@@ -43,19 +60,49 @@ class IPportal:
         #ip = self.IPDECODE(address[0:12])
         key = address[12:76]
         #Rdict['ip'] = ip
-        Rdict['grouphash'] = self.GroupHash
-        Rdict['peerid'] = self.api.id()['ID']
-        return json.dumps(Rdict)
-    def CheckPeer(self,address,message):
-        Jmessage = json.loads(message)
-        gkey = self.api.object_get(Jmessage['grouphash'])['Data']
-        m = hashlib.md5(address[0:12].encode('utf-8')+gkey.encode('utf-8'))
+        #Rdict['grouphash'] = self.GroupHash
+        Rdict['peerid'] = self.Kencode(self.groupkey,self.api.id()['ID'])
+        #return json.dumps(Rdict)
+        return Rdict['peerid']
+    def ToTheMoon(self,tag):
+        b = IOTATransaction.IOTATransaction('DontCare')
+        T = b.GetTransactionsFromTag(tag)
+        To = self.GetAddress()
+        Message = self.GetMessageFromAddress(To)
+        pt = b.MakePreparingTransaction(To,Message,tag)
+        b.SendTransaction([pt])
+        return b.GetTransactionHash()
+    def CheckPeer(self,address):
+        #Jmessage = json.loads(message)
+        #gkey = self.api.object_get(Jmessage['grouphash'])['Data']
+        m = hashlib.md5(address[0:12].encode('utf-8')+self.groupkey.encode('utf-8'))
         md5key = m.hexdigest()
         if TryteString.from_unicode(md5key) == address[12:76]:
             return True
         return False
     def GetConnectionInfo(self,address,message):
-        Jmessage = json.loads(message)
+        #Jmessage = json.loads(message)
         ip = self.IPDECODE(address[0:12])
-        peerid = Jmessage['peerid']
+        #peerid = Jmessage['peerid']
+        peerid = self.Kdecode(self.groupkey,message)
         return "/ip4/"+ip+"/tcp/4001/ipfs/"+peerid
+    def GetGoodPeer(self,tag):
+        GoodPeer = set()
+        b = IOTATransaction.IOTATransaction('DontCare')
+        T = b.GetTransactionsFromTag(tag)
+        for x in T:
+            Tinfo = b.GetTransactionMessage(x) # address, message
+            if self.CheckPeer(Tinfo[0]):
+                GoodPeer.add(self.GetConnectionInfo(*Tinfo))
+        return GoodPeer
+    def ConnectWithPeers(self,pset):
+        Rdict = dict()
+        for x in pset:
+            try:
+                output = self.api.swarm_connect(x)['Strings'][0].replace("\n","")
+                tmp = output.split(" ")
+                if tmp[2]=="success":
+                    Rdict[x] = "success"
+            except Exception as e:
+                Rdict[x] = str(e)
+        return Rdict
