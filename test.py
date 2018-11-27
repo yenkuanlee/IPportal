@@ -1,5 +1,4 @@
 import ipfsapi
-import IOTATransaction
 import IPportal
 import json
 import requests
@@ -7,7 +6,7 @@ Tag = 'HOWDOYOUTIRNTHISONIPPORTALC'
 GroupKey = 'DOKUWIKI'
 a = IPportal.IPportal('140.92.143.82',GroupKey)
 
-role = 0
+role = 1
 # Be a God
 if role==0:
     TID = a.ToTheMoon(Tag)
@@ -16,12 +15,16 @@ if role==0:
 # Be a Dog
 if role==1:
     GoodPeer = a.GetGoodPeer(Tag)
-    print(GoodPeer)
+    #print(GoodPeer)
     result = a.ConnectWithPeers(GoodPeer)
-    print(result)
+    #print(result)
+    cnt = 0
+    Exsited = False
     for x in result:
-        print(result[x])
-
-# Be a Man
-#if role==2:
-#    print(b.GetTransactionMessage('QYRVTRWQSATSIVFYJTSEAJPWPUTYZSAWPDYLIMEQEFYAPLRLEJFHZKLWMZSZYWMDJDCMNKHCPLEYZ9999'))
+        if result[x]=='success':
+            cnt += 1
+        elif 'dial to self attempted' in result[x]:
+            Exsited = True
+    if cnt > 0 and not Exsited:
+        TID = a.ToTheMoon(Tag)
+        print(TID)
