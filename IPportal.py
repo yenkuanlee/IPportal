@@ -66,8 +66,8 @@ class IPportal:
         #Rdict['ip'] = ip
         #Rdict['grouphash'] = self.GroupHash
         Rdict['peerid'] = self.Kencode(self.groupkey,self.api.id()['ID'])
-        #return json.dumps(Rdict)
-        return Rdict['peerid']
+        return json.dumps(Rdict)
+        #return Rdict['peerid']
     def ToTheMoon(self,tag):
         GoodPeer = self.GetGoodPeer(tag)
         for x in GoodPeer:
@@ -89,10 +89,10 @@ class IPportal:
             return True
         return False
     def GetConnectionInfo(self,address,message):
-        #Jmessage = json.loads(message)
+        Jmessage = json.loads(message)
         ip = self.IPDECODE(address[0:12])
         #peerid = Jmessage['peerid']
-        peerid = self.Kdecode(self.groupkey,message)
+        peerid = self.Kdecode(self.groupkey,Jmessage['peerid'])
         return "/ip4/"+ip+"/tcp/4001/ipfs/"+peerid
     def GetGoodPeer(self,tag):
         GoodPeer = set()
