@@ -69,8 +69,12 @@ class IPportal:
         #return json.dumps(Rdict)
         return Rdict['peerid']
     def ToTheMoon(self,tag):
+        GoodPeer = self.GetGoodPeer(tag)
+        for x in GoodPeer:
+            if self.api.id()['ID'] in x and Jconfig['ExternalIP'] in x:
+                return json.dumps({"status": "Failed", "log": "Already on the moon."})
         b = IOTATransaction.IOTATransaction('DontCare')
-        T = b.GetTransactionsFromTag(tag)
+        #T = b.GetTransactionsFromTag(tag)
         To = self.GetAddress()
         Message = self.GetMessageFromAddress(To)
         pt = b.MakePreparingTransaction(To,Message,tag)
@@ -101,8 +105,11 @@ class IPportal:
         return GoodPeer
     def ConnectWithPeers(self,pset):
         Rdict = dict()
+        peerID = self.api.id()['ID']
         for x in pset:
             try:
+                if peerID in x:
+                    continue
                 output = self.api.swarm_connect(x)['Strings'][0].replace("\n","")
                 tmp = output.split(" ")
                 if tmp[2]=="success":
