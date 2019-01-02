@@ -1,20 +1,22 @@
 import iota
 from iota import TryteString
 import json
+import os
 import requests
-
+Cpath = os.path.dirname(os.path.realpath(__file__))
+with open(Cpath+'/config.json') as f:
+    Jconfig = json.load(f)
 class IOTATransaction:
     def __init__(self, _MySeed):
         self.MySeed = str.encode(_MySeed)
         self.FinalBundle = "INIT"
         self.TransactionHashList = list()
-        self.api = iota.Iota("https://field.deviota.com:443")
-        #self.api = iota.Iota("http://140.116.247.117:14265")
+        self.api = iota.Iota(Jconfig['Gateway'])
     def MakePreparingTransaction(self, TargetAddress, StringMessage, tag='KEVIN999IS999HANDSOME'):
         TargetAddress = str.encode(TargetAddress)
         pt = iota.ProposedTransaction(address = iota.Address(TargetAddress),message = iota.TryteString.from_unicode(StringMessage),tag = iota.Tag(str.encode(tag)),value=0)
         return pt
-    def SendTransaction(self, PTList, dep=3, mwm=14):
+    def SendTransaction(self, PTList, dep=Jconfig['dep'], mwm=Jconfig['mwm']):
         FinalBundle = self.api.send_transfer(depth=dep,transfers=PTList,min_weight_magnitude=mwm)['bundle']
         self.FinalBundle = FinalBundle
         for txn in FinalBundle:
@@ -42,5 +44,5 @@ class IOTATransaction:
     def GetTransactionsFromTag(self,tag):
         headers = {'content-type': 'application/json','X-IOTA-API-Version': '1'}
         f = {"command": "findTransactions", "tags": [tag]}
-        r = requests.post("https://field.deviota.com:443", data=json.dumps(f), headers=headers)
+        r = requests.post(Jconfig['Gateway'], data=json.dumps(f), headers=headers)
         return json.loads(r.text)['hashes']

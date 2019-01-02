@@ -6,8 +6,12 @@ from iota import TryteString
 import ipfsapi
 import IOTATransaction
 import json
-IPFS_IP = '127.0.0.1'
-IPFS_PORT = '5001'
+import os
+Cpath = os.path.dirname(os.path.realpath(__file__))
+with open(Cpath+'/config.json') as f:
+    Jconfig = json.load(f)
+IPFS_IP = Jconfig['IPFS_IP']
+IPFS_PORT = Jconfig['IPFS_PORT']
 class IPportal:
     def __init__(self, _ip,_groupkey):
         self.ip = _ip

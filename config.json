@@ -1,0 +1,10 @@
+{
+    "Gateway": "http://node10.puyuma.org:14265",
+    "dep": 3,
+    "mwm": 14,
+    "IPFS_IP": "127.0.0.1",
+    "IPFS_PORT": "5001",
+    "ExternalIP": "140.92.143.82",
+    "Tag": "HOWDOYOUTIRNTHISONIPPORTALB",
+    "GroupKey": "DOKUWIKI"
+}
