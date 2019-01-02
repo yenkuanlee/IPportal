@@ -45,6 +45,7 @@ mv go-ipfs/ipfs /usr/local/bin/ipfs
 RUN pip3 install paho-mqtt
 RUN apt-get -qqy install mosquitto 
 RUN apt-get -qqy install mosquitto-clients
+RUN service mosquitto start
 
 RUN useradd -m localadmin && echo "localadmin:openstack" | chpasswd && adduser localadmin sudo
 USER localadmin
@@ -54,7 +55,7 @@ git clone https://github.com/yenkuanlee/IPportal && \
 git clone https://github.com/yenkuanlee/IOTATransaction && \
 #cd IDToy/demo && \
 #geth --datadir ./kevin/ init genesis.json && \
-ipfs init
+ipfs init && \
+ipfs bootstrap rm all
+RUN pip3 install requests --upgrade
 RUN echo 'export LC_ALL=zh_TW.utf8' >> /home/localadmin/.bashrc
-
-
