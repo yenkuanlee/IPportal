@@ -95,13 +95,25 @@ class IPportal:
         peerid = self.Kdecode(self.groupkey,Jmessage['peerid'])
         return "/ip4/"+ip+"/tcp/4001/ipfs/"+peerid
     def GetGoodPeer(self,tag):
+        PeerDict = dict()
         GoodPeer = set()
         b = IOTATransaction.IOTATransaction('DontCare')
         T = b.GetTransactionsFromTag(tag)
         for x in T:
-            Tinfo = b.GetTransactionMessage(x) # address, message
-            if self.CheckPeer(Tinfo[0]):
-                GoodPeer.add(self.GetConnectionInfo(*Tinfo))
+            Tinfo = b.GetTransactionMessage(x) # address, message, timestamp
+            if self.CheckPeer(Tinfo['address']):
+                peer = self.GetConnectionInfo(Tinfo['address'],Tinfo['message'])
+                ip = Tinfo['address'][0:12]
+                if ip in PeerDict:
+                    if int(Tinfo['timestamp'])>int(PeerDict[ip]['timestamp']):
+                        PeerDict[ip]['peer'] = peer
+                        PeerDict[ip]['timestamp'] = Tinfo['timestamp']
+                else:
+                    PeerDict[ip] = dict()
+                    PeerDict[ip]['peer'] = peer
+                    PeerDict[ip]['timestamp'] = Tinfo['timestamp']
+        for x in PeerDict:
+            GoodPeer.add(PeerDict[x]['peer'])
         return GoodPeer
     def ConnectWithPeers(self,pset):
         Rdict = dict()

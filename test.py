@@ -18,8 +18,8 @@ if role==0:
 if role==1:
     GoodPeer = a.GetGoodPeer(Jconfig['Tag'])
     print(GoodPeer)
-    result = a.ConnectWithPeers(GoodPeer)
-    print(result)
+    #result = a.ConnectWithPeers(GoodPeer)
+    #print(result)
     '''
     cnt = 0
     Exsited = False

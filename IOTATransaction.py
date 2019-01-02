@@ -32,6 +32,7 @@ class IOTATransaction:
         return self.TransactionHashList
     def GetTransactionMessage(self, TID):
         bundle = self.api.get_bundles(TID)
+        Rdict = dict()
         for x in bundle['bundles']:
             for txn in x:
                 Vtxn = vars(txn)
@@ -40,7 +41,11 @@ class IOTATransaction:
                 address = str(Vtxn['address'])
                 TryteStringMessage = str(Vtxn['signature_message_fragment'])
                 message = TryteString(str.encode(TryteStringMessage)).decode()
-                return address,message
+                Rdict['address'] = address
+                Rdict['message'] = message
+                Rdict['timestamp'] = str(Vtxn['timestamp'])
+                #return address,message
+                return Rdict
     def GetTransactionsFromTag(self,tag):
         headers = {'content-type': 'application/json','X-IOTA-API-Version': '1'}
         f = {"command": "findTransactions", "tags": [tag]}
