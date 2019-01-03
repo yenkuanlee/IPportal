@@ -20,6 +20,15 @@ class IPportal:
     def __init__(self, _ip,_groupkey):
         self.ip = _ip
         self.api = ipfsapi.connect(IPFS_IP,IPFS_PORT)
+        iplist = self.api.id()['Addresses']
+        ## Check IP
+        CheckIP = False
+        for x in iplist:
+            tmp = x.split("/")
+            if tmp[2]==_ip:
+                CheckIP = True
+        if not CheckIP:
+            exit(json.dumps({"status": "Failed", "log": "IP not allowed."}))
         self.groupkey = _groupkey
         self.GroupHash = self.api.object_put(io.BytesIO(json.dumps({"Data":_groupkey}).encode()))['Hash']
     ### Encoder and decoder
