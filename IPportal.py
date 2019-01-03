@@ -150,10 +150,6 @@ class IPportal:
             if peerID == self.api.id()['ID']:
                 continue
             if IP not in IPdict.keys():
-                try:
-                    self.api.swarm_connect(x)
-                except:
-                    Pflag = False
                 c.execute("INSERT INTO Peers VALUES('"+IP+"','"+peerID+"',0,0,0);")
                 conn.commit()
             else:
@@ -161,6 +157,7 @@ class IPportal:
                     print("KEVIN")
                     continue
             try:
+                self.api.swarm_connect(x)
                 ping = self.api.ping(tmp[len(tmp)-1],count=1)
                 Pflag = ping[1]['Success']
             except:
