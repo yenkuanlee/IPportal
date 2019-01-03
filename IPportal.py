@@ -143,24 +143,32 @@ class IPportal:
         Ntime = int(time.time())
         Delay = 10
         for x in GoodPeer:
+            Pflag = True
             tmp = x.split("/")
             IP = tmp[2]
             peerID = tmp[len(tmp)-1]
             if peerID == self.api.id()['ID']:
                 continue
             if IP not in IPdict.keys():
-                self.api.swarm_connect(x)
+                try:
+                    self.api.swarm_connect(x)
+                except:
+                    Pflag = False
                 c.execute("INSERT INTO Peers VALUES('"+IP+"','"+peerID+"',0,0,0);")
                 conn.commit()
             else:
                 if IPdict[IP] > Ntime:
                     print("KEVIN")
                     continue
-            ping = self.api.ping(tmp[len(tmp)-1],count=1)
-            if not ping[1]['Success']:
+            try:
+                ping = self.api.ping(tmp[len(tmp)-1],count=1)
+                Pflag = ping[1]['Success']
+            except:
+                Pflag = False
+            if not Pflag:
                 c.execute("UPDATE Peers SET status=status+1,speed=-1,nextTry=(status+1)*"+str(Delay)+"+"+str(Ntime)+" WHERE IP = '"+IP+"';")
                 conn.commit()
             else:
-                c.execute("UPDATE Peers SET status=0,speed=0,nextTry="+str(Ntime)+" WHERE IP = '"+IP+"';")
+                c.execute("UPDATE Peers SET status=0,speed="+str(ping[1]['Time'])+",nextTry="+str(Ntime)+" WHERE IP = '"+IP+"';")
                 conn.commit()
         conn.close()
