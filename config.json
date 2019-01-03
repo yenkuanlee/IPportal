@@ -1,5 +1,5 @@
 {
-    "Gateway": "http://node10.puyuma.org:14265",
+    "Gateway": "http://node0.puyuma.org:14265",
     "dep": 3,
     "mwm": 14,
     "IPFS_IP": "127.0.0.1",

@@ -149,6 +149,7 @@ class IPportal:
             if peerID == self.api.id()['ID']:
                 continue
             if IP not in IPdict.keys():
+                self.api.swarm_connect(x)
                 c.execute("INSERT INTO Peers VALUES('"+IP+"','"+peerID+"',0,0,0);")
                 conn.commit()
             else:
@@ -160,6 +161,6 @@ class IPportal:
                 c.execute("UPDATE Peers SET status=status+1,speed=-1,nextTry=(status+1)*"+str(Delay)+"+"+str(Ntime)+" WHERE IP = '"+IP+"';")
                 conn.commit()
             else:
-                c.execute("UPDATE Peers SET status=0,speed=0,nextTry=0 WHERE IP = '"+IP+"';")
+                c.execute("UPDATE Peers SET status=0,speed=0,nextTry="+str(Ntime)+" WHERE IP = '"+IP+"';")
                 conn.commit()
         conn.close()
