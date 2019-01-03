@@ -28,7 +28,7 @@ class IPportal:
             if tmp[2]==_ip:
                 CheckIP = True
         if not CheckIP:
-            exit(json.dumps({"status": "Failed", "log": "IP not allowed."}))
+            exit(json.dumps({"status": "Failed", "log": "IP is not allowed."}))
         self.groupkey = _groupkey
         self.GroupHash = self.api.object_put(io.BytesIO(json.dumps({"Data":_groupkey}).encode()))['Hash']
     ### Encoder and decoder
