@@ -7,5 +7,6 @@
     "IPFS_PORT": "5001",
     "ExternalIP": "140.92.143.82",
     "Tag": "HOWDOYOUTIRNTHISONIPPORTALG",
-    "GroupKey": "DOKUWIKI"
+    "GroupKey": "DOKUWIKI",
+    "DBpath": "./DB"
 }

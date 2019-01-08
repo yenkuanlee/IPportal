@@ -140,7 +140,7 @@ class IPportal:
         return Rdict
     #### Local DB
     def LDBupdate(self):
-        conn = sqlite3.connect(Cpath+'/Iportal.db')
+        conn = sqlite3.connect(Cpath+'/'+Jconfig['DBpath']+'/Iportal.db')
         c = conn.cursor()
         c.execute("CREATE TABLE IF NOT EXISTS Peers(IP text, peerID text, status int, speed int, nextTry int, PRIMARY KEY(IP));")
         conn.commit()

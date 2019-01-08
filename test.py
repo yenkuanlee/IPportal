@@ -8,7 +8,7 @@ with open(Cpath+'/config.json') as f:
     Jconfig = json.load(f)
 a = IPportal.IPportal(Jconfig['ExternalIP'],Jconfig['GroupKey'])
 
-role = 0
+role = 1
 # Be a God
 if role==0:
     TID = a.ToTheMoon(Jconfig['Tag'])
