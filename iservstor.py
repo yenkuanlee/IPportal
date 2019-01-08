@@ -12,7 +12,7 @@ class iServStor:
     ### Initialization
     def __init__(self):
         self.api = ipfsapi.connect(IPFS_IP,IPFS_PORT)
-    def GetPeers(self):
+    def GetGoodPeers(self):
         Pdict = dict()
         conn = sqlite3.connect(Cpath+'/'+Jconfig['DBpath']+'/Iportal.db')
         c = conn.cursor()
@@ -23,3 +23,9 @@ class iServStor:
             Pdict[x[1]]['status'] = x[2]
             Pdict[x[1]]['speed'] = x[3]
         return Pdict
+    def GetSwarmPeers(self):
+        Pset = set()
+        swarm = self.api.swarm_peers()['Peers']
+        for x in swarm:
+            Pset.add(x['Peer'])
+        return Pset
