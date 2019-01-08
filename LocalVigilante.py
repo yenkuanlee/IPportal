@@ -8,5 +8,8 @@ with open(Cpath+'/config.json') as f:
     Jconfig = json.load(f)
 a = IPportal.IPportal(Jconfig['ExternalIP'],Jconfig['GroupKey'])
 while True:
-    a.LDBupdate()
+    try:
+        a.LDBupdate()
+    except:
+        pass
     time.sleep(1)

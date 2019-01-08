@@ -3,15 +3,34 @@ from iota import TryteString
 import json
 import os
 import requests
+import signal
 Cpath = os.path.dirname(os.path.realpath(__file__))
 with open(Cpath+'/config.json') as f:
     Jconfig = json.load(f)
 class IOTATransaction:
     def __init__(self, _MySeed):
+        signal.signal(signal.SIGALRM, self.handler)
         self.MySeed = str.encode(_MySeed)
         self.FinalBundle = "INIT"
         self.TransactionHashList = list()
-        self.api = iota.Iota(Jconfig['Gateway'])
+        self.Gateway = 'null'
+        self.GetGateway()
+        if self.Gateway == 'null':
+            exit('No Good Gateway')
+        self.api = iota.Iota(self.Gateway)
+    def handler(self,signum, frame):
+        raise Exception("end of time")
+    def GetGateway(self):
+        Glist = Jconfig['Gateway']
+        for x in Glist:
+            try:
+                print(x)
+                self.Gateway = x
+                self.GetTransactionsFromTag('KEVIN999IS999HANDSOME')
+                break
+            except Exception as e:
+                print(str(e))
+                continue
     def MakePreparingTransaction(self, TargetAddress, StringMessage, tag='KEVIN999IS999HANDSOME'):
         TargetAddress = str.encode(TargetAddress)
         pt = iota.ProposedTransaction(address = iota.Address(TargetAddress),message = iota.TryteString.from_unicode(StringMessage),tag = iota.Tag(str.encode(tag)),value=0)
@@ -47,7 +66,8 @@ class IOTATransaction:
                 #return address,message
                 return Rdict
     def GetTransactionsFromTag(self,tag):
+        signal.alarm(Jconfig['GatewayTimeout'])
         headers = {'content-type': 'application/json','X-IOTA-API-Version': '1'}
         f = {"command": "findTransactions", "tags": [tag]}
-        r = requests.post(Jconfig['Gateway'], data=json.dumps(f), headers=headers)
+        r = requests.post(self.Gateway, data=json.dumps(f), headers=headers)
         return json.loads(r.text)['hashes']

@@ -11,6 +11,7 @@ RUN apt-get -qqy install wget
 RUN apt-get -qqy install vim
 RUN apt-get -qqy install net-tools # ifconfig
 RUN apt-get -qqy install git
+RUN apt-get -qqy install sqlite3
 
 # python 3.6
 RUN apt-get -qqy install python3.6-dev

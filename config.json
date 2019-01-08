@@ -1,5 +1,6 @@
 {
-    "Gateway": "http://node0.puyuma.org:14265",
+    "Gateway": ["http://node.deviceproof.org:14265","https://node.deviceproof.org:443","http://node0.puyuma.org:14265"],
+    "GatewayTimeout": 10,
     "dep": 3,
     "mwm": 14,
     "IPFS_IP": "127.0.0.1",
