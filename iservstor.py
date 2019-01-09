@@ -60,18 +60,19 @@ class iServStor:
     def CheckFileLocation(self,Finfo):
         Pset = set()
         result = self.api.dht_findprovs(Finfo['Hash'])
-        return json.dumps(result)
         for x in result:
-            if x['ID']=="":
-                continue
-            Pset.add(x['ID'])
+            if x["Type"]==4:
+                Pset.add(x['Responses'][0]['ID'])
         return Pset
     def FileBackup(self,Finfo,cnt):
         Plist = list()
         gpeers = self.GetGoodPeers()
         count = 0
         for x in gpeers:
-            self.Publish(gpeers[x]['IP'],PIN_ADD,Finfo['Hash'])
+            try:
+                self.Publish(gpeers[x]['IP'],PIN_ADD,Finfo['Hash'])
+            except:
+                continue
             Plist.append(x)
             count += 1
             if count >= cnt:
