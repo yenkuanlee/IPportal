@@ -66,8 +66,11 @@ class IOTATransaction:
                 #return address,message
                 return Rdict
     def GetTransactionsFromTag(self,tag):
-        signal.alarm(Jconfig['GatewayTimeout'])
-        headers = {'content-type': 'application/json','X-IOTA-API-Version': '1'}
-        f = {"command": "findTransactions", "tags": [tag]}
-        r = requests.post(self.Gateway, data=json.dumps(f), headers=headers)
-        return json.loads(r.text)['hashes']
+        try:
+            signal.alarm(Jconfig['GatewayTimeout'])
+            headers = {'content-type': 'application/json','X-IOTA-API-Version': '1'}
+            f = {"command": "findTransactions", "tags": [tag]}
+            r = requests.post(self.Gateway, data=json.dumps(f), headers=headers)
+            return json.loads(r.text)['hashes']
+        except:
+            return {"status": "Failed"}
