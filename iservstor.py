@@ -57,11 +57,24 @@ class iServStor:
                 x['type'] = Ftype
                 return x
         return {"status": "Failed"}
-    def FileBackup(self,Fhash,cnt):
+    def CheckFileLocation(self,Finfo):
+        Pset = set()
+        result = self.api.dht_findprovs(Finfo['Hash'])
+        return json.dumps(result)
+        for x in result:
+            if x['ID']=="":
+                continue
+            Pset.add(x['ID'])
+        return Pset
+    def FileBackup(self,Finfo,cnt):
+        Plist = list()
         gpeers = self.GetGoodPeers()
         count = 0
         for x in gpeers:
-            self.Publish(gpeers[x]['IP'],PIN_ADD,Fhash)
+            self.Publish(gpeers[x]['IP'],PIN_ADD,Finfo['Hash'])
+            Plist.append(x)
             count += 1
             if count >= cnt:
                 break
+        Finfo['Backup'] = Plist
+        return Finfo
