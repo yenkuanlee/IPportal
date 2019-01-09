@@ -8,5 +8,6 @@
     "ExternalIP": "140.92.143.82",
     "Tag": "HOWDOYOUTIRNTHISONIPPORTALG",
     "GroupKey": "DOKUWIKI",
-    "DBpath": "./DB"
+    "DBpath": "./DB",
+    "FilePath": "./File"
 }
