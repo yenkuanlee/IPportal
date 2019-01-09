@@ -28,5 +28,5 @@ def on_message(client, userdata, msg):
 client = mqtt.Client()
 client.on_connect = on_connect
 client.on_message = on_message
-client.connect("localhost", Jconfig[MQTT_PORT], 0)
+client.connect("localhost", Jconfig["MQTT_PORT"], 0)
 client.loop_forever()
