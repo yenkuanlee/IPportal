@@ -25,6 +25,8 @@ class iServStor:
         if msg_info.is_published() == False:
             msg_info.wait_for_publish()
         client.disconnect()
+    def CallPeer(self,target):
+        self.Publish(target,"call_peer",Jconfig['ExternalIP'])
     def GetGoodPeers(self):
         Pdict = dict()
         speers = self.GetSwarmPeers()
