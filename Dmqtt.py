@@ -23,9 +23,10 @@ def on_message(client, userdata, msg):
         print(str(msg.payload))
     if msg.topic==PIN_ADD:
         api.pin_add(str(msg.payload))
+        print("KEVIN PIN ADD : "+str(msg.payload))
 
 client = mqtt.Client()
 client.on_connect = on_connect
 client.on_message = on_message
-client.connect("localhost", 1883, 0)
+client.connect("localhost", Jconfig[MQTT_PORT], 0)
 client.loop_forever()

@@ -1,5 +1,6 @@
 import ipfsapi
 import json
+import paho.mqtt.client as mqtt
 import os
 import sqlite3
 ### Configuration
@@ -8,12 +9,22 @@ with open(Cpath+'/config.json') as f:
     Jconfig = json.load(f)
 IPFS_IP = Jconfig['IPFS_IP']
 IPFS_PORT = Jconfig['IPFS_PORT']
+PIN_ADD = "pin_add"
 class iServStor:
     ### Initialization
     def __init__(self):
         self.api = ipfsapi.connect(IPFS_IP,IPFS_PORT)
         os.system("mkdir -p "+Cpath+"/"+Jconfig['DBpath'])
         os.system("mkdir -p "+Cpath+"/"+Jconfig['FilePath'])
+    def Publish(self, target, channel, message):
+        client = mqtt.Client()
+        client.max_inflight_messages_set(200000)
+        client.connect(target, Jconfig['MQTT_PORT'])
+        client.loop_start()
+        msg_info = client.publish(channel, message, qos=1)
+        if msg_info.is_published() == False:
+            msg_info.wait_for_publish()
+        client.disconnect()
     def GetGoodPeers(self):
         Pdict = dict()
         speers = self.GetSwarmPeers()
@@ -46,3 +57,11 @@ class iServStor:
                 x['type'] = Ftype
                 return x
         return {"status": "Failed"}
+    def FileBackup(self,Fhash,cnt):
+        gpeers = self.GetGoodPeers()
+        count = 0
+        for x in gpeers:
+            self.Publish(gpeers[x]['IP'],PIN_ADD,Fhash)
+            count += 1
+            if count >= cnt:
+                break
