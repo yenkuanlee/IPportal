@@ -67,11 +67,20 @@ class iServStor:
                 Pset.add(x['Responses'][0]['ID'])
         return Pset
     def FileBackup(self,Finfo,cnt):
-        Plist = list()
+        Plist = list(self.CheckFileLocation(Finfo))
         gpeers = self.GetGoodPeers()
+        for x in Plist: # Remove bad peer from now-backup
+            if x not in gpeers.keys():
+                Plist.remove(x)
+        if len(Plist) >= cnt: # Enough Backup Already
+            Finfo['Backup'] = Plist
+            return Finfo
+        cnt -= len(Plist)
         count = 0
         for x in gpeers:
             try:
+                if x in Plist:
+                    continue
                 self.Publish(gpeers[x]['IP'],PIN_ADD,Finfo['Hash'])
             except:
                 continue
