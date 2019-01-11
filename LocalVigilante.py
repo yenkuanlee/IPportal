@@ -10,6 +10,6 @@ a = IPportal.IPportal(Jconfig['ExternalIP'],Jconfig['GroupKey'])
 while True:
     try:
         a.LDBupdate()
+        time.sleep(1)
     except:
         pass
-    time.sleep(1)
