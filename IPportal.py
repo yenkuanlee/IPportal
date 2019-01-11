@@ -110,6 +110,7 @@ class IPportal:
         T = b.GetTransactionsFromTag(tag)
         if "status" in T:
             if T["status"] == "Failed":
+                print(json.dumps(T))
                 return GoodPeer
         for x in T:
             Tinfo = b.GetTransactionMessage(x) # address, message, timestamp

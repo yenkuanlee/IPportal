@@ -13,24 +13,14 @@ class IOTATransaction:
         self.MySeed = str.encode(_MySeed)
         self.FinalBundle = "INIT"
         self.TransactionHashList = list()
-        self.Gateway = 'null'
-        self.GetGateway()
-        if self.Gateway == 'null':
-            exit('No Good Gateway')
+        self.Gindex = 0
+        self.Gateway = Jconfig['Gateway'][0]
         self.api = iota.Iota(self.Gateway)
     def handler(self,signum, frame):
+        self.Gindex += 1
+        self.Gateway = Jconfig['Gateway'][self.Gindex]
+        self.api = iota.Iota(self.Gateway)
         raise Exception("end of time")
-    def GetGateway(self):
-        Glist = Jconfig['Gateway']
-        for x in Glist:
-            try:
-                print(x)
-                self.Gateway = x
-                self.GetTransactionsFromTag('KEVIN999IS999HANDSOME')
-                break
-            except Exception as e:
-                print(str(e))
-                continue
     def MakePreparingTransaction(self, TargetAddress, StringMessage, tag='KEVIN999IS999HANDSOME'):
         TargetAddress = str.encode(TargetAddress)
         pt = iota.ProposedTransaction(address = iota.Address(TargetAddress),message = iota.TryteString.from_unicode(StringMessage),tag = iota.Tag(str.encode(tag)),value=0)
@@ -67,10 +57,13 @@ class IOTATransaction:
                 return Rdict
     def GetTransactionsFromTag(self,tag):
         try:
+            print(self.Gateway)
             signal.alarm(Jconfig['GatewayTimeout'])
             headers = {'content-type': 'application/json','X-IOTA-API-Version': '1'}
             f = {"command": "findTransactions", "tags": [tag]}
             r = requests.post(self.Gateway, data=json.dumps(f), headers=headers)
             return json.loads(r.text)['hashes']
-        except:
-            return {"status": "Failed"}
+        except Exception as e:
+            if self.Gindex < len(Jconfig['Gateway']):
+                return self.GetTransactionsFromTag(tag)
+            return {"status": "Failed", "log": str(e)}
