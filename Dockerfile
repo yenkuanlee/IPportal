@@ -37,10 +37,11 @@ RUN locale-gen zh_TW zh_TW.UTF-8 zh_CN.UTF-8 en_US.UTF-8
 #python3 setup.py install
 
 # ipfs
-RUN cd /tmp && \
-wget https://dist.ipfs.io/go-ipfs/v0.4.18/go-ipfs_v0.4.18_linux-amd64.tar.gz && \
-tar xvfz go-ipfs_*.tar.gz && \
-mv go-ipfs/ipfs /usr/local/bin/ipfs
+#RUN cp go-ipfs_v0.4.18_linux-amd64.tar.gz /tmp && \
+#cd /tmp && \
+#wget https://dist.ipfs.io/go-ipfs/v0.4.18/go-ipfs_v0.4.18_linux-amd64.tar.gz && \
+#tar xvfz go-ipfs_*.tar.gz && \
+#mv go-ipfs/ipfs /usr/local/bin/ipfs
 
 # mqtt
 RUN pip3 install paho-mqtt
@@ -54,8 +55,12 @@ RUN pip3 install pyota
 RUN cd && \
 git clone https://github.com/yenkuanlee/IPportal && \
 git clone https://github.com/yenkuanlee/IOTATransaction && \
-#cd IDToy/demo && \
-#geth --datadir ./kevin/ init genesis.json && \
+# ipfs
+cp IPportal/go-ipfs_v0.4.18_linux-amd64.tar.gz /tmp && \
+cd /tmp && \
+tar xvfz go-ipfs_*.tar.gz && \
+mv go-ipfs/ipfs /usr/local/bin/ipfs && \
+
 ipfs init && \
 ipfs bootstrap rm all
 RUN pip3 install requests --upgrade
