@@ -18,36 +18,37 @@ RUN apt-get -qqy install python3.6-dev
 RUN apt -qqy install python3-setuptools
 RUN apt-get -qqy install python3-pip
 RUN apt -qqy install software-properties-common
-#RUN add-apt-repository ppa:ethereum/ethereum
+RUN add-apt-repository ppa:ethereum/ethereum
 RUN apt-get update
-#RUN apt-get -qqy install solc
-#RUN pip3 install web3
-#RUN pip3 install py-solc
+RUN apt-get -qqy install solc
+RUN pip3 install web3
+RUN pip3 install py-solc
 RUN pip3 install ipfsapi
 #RUN pip3 install pyota
-#RUN apt-get -qqy install geth
+RUN apt-get -qqy install geth
 RUN apt-get install -y locales
 RUN locale-gen zh_TW zh_TW.UTF-8 zh_CN.UTF-8 en_US.UTF-8
 
 # python-Ethereum
-#RUN apt-get -qqy install libssl-dev build-essential automake pkg-config libtool libffi-dev libgmp-dev libyaml-cpp-dev
-#RUN cd /tmp && \
-#git clone https://github.com/ethereum/pyethereum && \
-#cd /tmp/pyethereum && \
-#python3 setup.py install
+RUN apt-get -qqy install libssl-dev build-essential automake pkg-config libtool libffi-dev libgmp-dev libyaml-cpp-dev
+RUN cd /tmp && \
+git clone https://github.com/ethereum/pyethereum && \
+cd /tmp/pyethereum && \
+python3 setup.py install
 
 # ipfs
-#RUN cp go-ipfs_v0.4.18_linux-amd64.tar.gz /tmp && \
-#cd /tmp && \
-#wget https://dist.ipfs.io/go-ipfs/v0.4.18/go-ipfs_v0.4.18_linux-amd64.tar.gz && \
-#tar xvfz go-ipfs_*.tar.gz && \
-#mv go-ipfs/ipfs /usr/local/bin/ipfs
+RUN cd /tmp && \
+wget https://dist.ipfs.io/go-ipfs/v0.4.18/go-ipfs_v0.4.18_linux-amd64.tar.gz && \
+tar xvfz go-ipfs_*.tar.gz && \
+mv go-ipfs/ipfs /usr/local/bin/ipfs
 
 # mqtt
 RUN pip3 install paho-mqtt
 RUN apt-get -qqy install mosquitto 
 RUN apt-get -qqy install mosquitto-clients
 RUN service mosquitto start
+
+RUN chmod 777 /usr/local/bin
 
 RUN useradd -m localadmin && echo "localadmin:openstack" | chpasswd && adduser localadmin sudo
 USER localadmin
@@ -56,10 +57,10 @@ RUN cd && \
 git clone https://github.com/yenkuanlee/IPportal && \
 git clone https://github.com/yenkuanlee/IOTATransaction && \
 # ipfs
-cp IPportal/go-ipfs_v0.4.18_linux-amd64.tar.gz /tmp && \
-cd /tmp && \
-tar xvfz go-ipfs_*.tar.gz && \
-mv go-ipfs/ipfs /usr/local/bin/ipfs && \
+#cp IPportal/go-ipfs_v0.4.18_linux-amd64.tar.gz /tmp && \
+#cd /tmp && \
+#tar xvfz go-ipfs_*.tar.gz && \
+#mv go-ipfs/ipfs /usr/local/bin/ipfs && \
 
 ipfs init && \
 ipfs bootstrap rm all
