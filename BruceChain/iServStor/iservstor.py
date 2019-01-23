@@ -5,7 +5,7 @@ import os
 import sqlite3
 ### Configuration
 Cpath = os.path.dirname(os.path.realpath(__file__))
-with open(Cpath+'/config.json') as f:
+with open(Cpath+'/../../config.json') as f:
     Jconfig = json.load(f)
 IPFS_IP = Jconfig['IPFS_IP']
 IPFS_PORT = Jconfig['IPFS_PORT']
@@ -16,6 +16,10 @@ class iServStor:
         self.api = ipfsapi.connect(IPFS_IP,IPFS_PORT)
         os.system("mkdir -p "+Cpath+"/"+Jconfig['DBpath'])
         os.system("mkdir -p "+Cpath+"/"+Jconfig['FilePath'])
+        self.conn = sqlite3.connect(Cpath+'/'+Jconfig['DBpath']+'/Iportal.db')
+        self.c = self.conn.cursor()
+        self.c.execute("CREATE TABLE IF NOT EXISTS Peers(IP text, peerID text, status int, speed int, nextTry int, PRIMARY KEY(IP));")
+        self.conn.commit()
     def Publish(self, target, channel, message):
         client = mqtt.Client()
         client.max_inflight_messages_set(200000)
@@ -25,8 +29,8 @@ class iServStor:
         if msg_info.is_published() == False:
             msg_info.wait_for_publish()
         client.disconnect()
-    def CallPeer(self,target):
-        self.Publish(target,"call_peer",Jconfig['ExternalIP'])
+    #def CallPeer(self,target):
+    #    self.Publish(target,"call_peer",Jconfig['ExternalIP'])
     def GetGoodPeers(self):
         Pdict = dict()
         speers = self.GetSwarmPeers()

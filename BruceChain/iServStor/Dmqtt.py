@@ -4,7 +4,7 @@ import os
 import paho.mqtt.client as mqtt
 ### Configuration
 Cpath = os.path.dirname(os.path.realpath(__file__))
-with open(Cpath+'/config.json') as f:
+with open(Cpath+'/../../config.json') as f:
     Jconfig = json.load(f)
 IPFS_IP = Jconfig['IPFS_IP']
 IPFS_PORT = Jconfig['IPFS_PORT']
